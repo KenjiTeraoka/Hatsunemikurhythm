@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>マジカルミライ2022</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/textalive-app-api/dist/index.js"></script>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- lottie-player読み込んみ -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@1.5.7/dist/lottie-player.js"></script>
+</head>
+<body>
+    <div class="wrapper">
+        
+        <div class="indexviwe">
+            <lottie-player
+                class="indexviwe-bg"
+                src="json/Background.json"
+                autoplay
+                loop>
+            </lottie-player>
+
+            <div class="indextext">
+                <img src="img/Asset 3.png" alt="マジカルミライ">
+                <p>Press <span>'ENTER'</span> to start</p>
+            </div>
+
+            <div class="stagearea">
+                <div class="stage1"></div>
+                <div class="centerstage1"></div>
+                <div class="stage2"></div>
+                <div class="centerstage2"></div>
+            </div>
+        </div>
+
+        
+
+        <div class="mainarea">
+
+            <div class="container">
+                <lottie-player
+                    id="miku-lottie"		  
+                    src="json/Miku.json"
+                    autoplay
+                    loop>
+                </lottie-player>
+            </div>
+            
+            <div class="lanearea">
+                <div class="lane lane1">
+                    <p class="text"></p>
+                    <div class="judge1 active"></div>
+                </div>
+
+                <div class="lane lane2">
+                    <div class="judge2"></div>
+                </div>
+
+                <div class="lane lane3">
+                    <div class="judge3"></div>
+                </div>
+
+                <div class="lane lane4">
+                    <div class="judge4"></div>
+                </div>
+            </div>
+
+            <div class="audiencearea">
+                <div class="audienceleft">
+                    <div class="audience">
+                        <lottie-player
+                            id="line-3-1-lottie" 			  
+                            src="json/Line-3-1.json"
+                            autoplay
+                            loop>
+                        </lottie-player>
+                    </div>
+                    <div class="audience">
+                        <lottie-player
+                            id="line-2-1-lottie" 			  
+                            src="json/Line-2-1.json"
+                            autoplay
+                            loop>
+                        </lottie-player>
+                    </div>
+                    <div class="audience">
+                        <lottie-player
+                            id="line-1-1-lottie" 			  
+                            src="json/Line-1-1.json"
+                            autoplay
+                            loop>
+                        </lottie-player>
+                    </div>
+                    
+                </div>
+                <div class="audienceright">
+                    <div class="audience">
+                        <lottie-player
+                            id="line-3-2-lottie" 			  
+                            src="json/Line-3-2.json"
+                            autoplay
+                            loop>
+                        </lottie-player>
+                    </div>
+                    <div class="audience">
+                        <lottie-player
+                            id="line-2-2-lottie" 			  
+                            src="json/Line-2-2.json"
+                            autoplay
+                            loop>
+                        </lottie-player>
+                    </div>
+                    <div class="audience">
+                        <lottie-player
+                            id="line-1-2-lottie" 			  
+                            src="json/Line-1-2.json"
+                            autoplay
+                            loop>
+                        </lottie-player>
+                    </div>
+                    
+                </div>
+            
+            </div>
+            
+        </div>
+
+        <div class="audiencebg"></div>
+
+        <div class="score"></div>
+
+        <div class="none">
+            <div id="overlay"><button class="play" disabled>再生</button></div>
+            <div id="media"></div>
+            <div id="header">
+                <div id="meta">
+                    <div id="artist"><strong>artist:</strong> <span>-</span></div>
+                    <div id="song"><strong>song:</strong> <span>-</span></div>
+                </div>
+                <ul>
+                    <li>発声中の歌詞テキストがあれば表示されます</li>
+                    <li>
+                        <a>TextAlive ホストの有無</a>により再生コントロールの表示状態が切り替わります
+                    </li>
+                </ul>
+            </div>
+            <div id="control" style="display: none">
+                <button class="play" disabled>再生</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector(".text").style.transform = `translateY(-100%)`
+        let positionY = 0
+        const inteval = setInterval(() => {
+            positionY += 1
+            document.querySelector(".text").style.transform = `translateY(${positionY}px)`
+            if (10000 < positionY) {
+                clearInterval(inteval)
+            }
+        }, 10)
+
+        //ミクアニメーション
+        let animation = document.getElementById("miku-lottie");
+        animation.addEventListener("ready", () => {
+            let animationData = animation.getLottie();
+            animationData.goToAndPlay("standby", true);
+        });
+
+        //みく動く
+        let mikuInterval = setinterval(function () {
+            if (score < 100) {
+                animationData.goToAndStop("singing-4", false)
+                animationData.goToAndPlay("singing-1", false);
+            } else if (100 <= score < 200) {
+                animationData.goToAndStop("singing-1", false)
+                animationData.goToAndPlay("singing-2", false);
+            } else if (200 <= score) {
+                animationData.goToAndStop("singing-2", false)
+                animationData.goToAndPlay("singing-3", false);
+            } else {
+                animationData.goToAndStop("singing-3", false)
+                animationData.goToAndPlay("singing-4", false);
+            }
+        });
+
+        //ENTER to start
+        const entertostart = document.querySelector(".indextext p")
+        entertostart.animate(
+	        [
+	            { opacity: 1 },
+		        { opacity: 0 }
+	        ],
+	        {
+		       duration: 800,
+	        	easing: 'linear',
+		        iterations: Infinity,
+		        direction: 'alternate'
+	        }
+        );
+
+        const indexViwe = document.querySelector(".wrapper")
+        document.addEventListener("keydown", (event) => {
+            if(event.keyCode === 13) {//Enter
+                animationData.goToAndPlay("singing-1", false);
+                indexViwe.style.marginTop = '-470px';
+                entertostart.style.opacity = 0;
+                return false
+            }
+        })
+    
+
+        // 判定エリア移動処理
+        const array = ['judge1','judge2','judge3','judge4']
+        let num = 0
+
+        document.addEventListener("keydown", (event) => {
+            if(event.keyCode === 39) { // →右
+                move_right()
+                return false
+            }
+            if(event.keyCode === 37) { // ←左
+                move_left()
+                return false
+            }
+        })
+
+        function move_right() {
+            num = (num + 1) % array.length;
+            common()
+        }
+        function move_left() {
+            num = (num <= 0 ? array.length : num) - 1
+            common()
+        }
+
+        function common() {
+            for (const i of array) {
+                if (array[num] === i) {
+                    document.querySelector(`.${i}`).classList.add("active")
+                    select = i;
+                }else {
+                    document.querySelector(`.${i}`).classList.remove("active")
+                }
+            }
+        }
+
+
+        // テキストアライブ
+        const { Player } = TextAliveApp;
+
+            // 単語が発声されていたら #text に表示する
+            // Show words being vocalized in #text
+            const animateWord = function (now, unit) {
+                if (unit.contains(now)) {
+                    if (currentText !== unit.text) {
+                        const p = document.createElement("p")
+                        p.textContent = unit.text;
+                        var x = rand();
+                        document.querySelector(`.lane${x}`).appendChild(p)
+                        animateText(p, x)
+                        currentText = unit.text
+
+                    }
+                }
+            };
+
+            // TextAlive Player を作る
+            // Instantiate a TextAlive Player instance
+            const player = new Player({
+                app: {
+                    token: "tEYcsW7RdHUByJYT",
+                },
+                mediaElement: document.querySelector("#media"),
+            });
+
+            // TextAlive Player のイベントリスナを登録する
+            // Register event listeners
+            player.addListener({
+                onAppReady: (app) => {
+                    const header = document.querySelector("#header a");
+                    if (!app.managed) {
+                        document.querySelector("#control").style.display =
+                            "block";
+
+                        // 再生ボタン / Start music playback
+                        document.addEventListener("keydown", (event) => {
+                            if(event.keyCode === 13) {
+                                player.video && player.requestPlay();
+                            }
+                        })
+
+                        header.setAttribute(
+                            "href",
+                            "https://developer.textalive.jp/app/run/?ta_app_url=https%3A%2F%2Ftextalivejp.github.io%2Ftextalive-app-basic%2F&ta_song_url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DygY2qObZv24"
+                        );
+                    } else {
+                        header.setAttribute(
+                            "href",
+                            "https://textalivejp.github.io/textalive-app-basic/"
+                        );
+                    }
+
+                    if (!app.songUrl) {
+                        player.createFromSongUrl(
+                            "https://piapro.jp/t/RoPB/20220122172830"
+                        );
+                    } else {
+                        player.video && player.requestPlay();
+                    }
+                },
+                onVideoReady,
+                onTimerReady,
+            });
+
+            const playBtns = document.querySelectorAll(".play");
+
+            const artistSpan = document.querySelector("#artist span");
+            const songSpan = document.querySelector("#song span");
+
+            function onAppReady(app) {
+                // TextAlive ホストと接続されていなければ再生コントロールを表示する
+                // Show control if this app is launched standalone (not connected to a TextAlive host)
+            }
+
+            /**
+             * 動画オブジェクトの準備が整ったとき（楽曲に関する情報を読み込み終わったとき）に呼ばれる
+             *
+             * @param {IVideo} v - https://developer.textalive.jp/packages/textalive-app-api/interfaces/ivideo.html
+             */
+            function onVideoReady(v) {
+                // メタデータを表示する
+                // Show meta data
+                artistSpan.textContent = player.data.song.artist.name;
+                songSpan.textContent = player.data.song.name;
+
+                // 定期的に呼ばれる各単語の "animate" 関数をセットする
+                // Set "animate" function
+                let w = player.video.firstPhrase;
+                while (w) {
+                    w.animate = animateWord;
+                    w = w.next;
+                }
+            }
+
+            function onTimerReady(t) {
+                if (!player.app.managed) {
+                    document
+                        .querySelectorAll("button")
+                        .forEach((btn) => (btn.disabled = false));
+                }
+            }
+
+
+        //スコア変数
+        var score = 0;
+        const score_box = document.querySelector(".score")
+
+        // 判定レーン変数
+        var select = '';
+
+        // 乱数生成関数
+        function rand(){
+            return Math.floor(Math.random() * (5 - 1)) + 1;
+        }
+
+        let currentText = ``
+
+        const animateText = (el, lane_num) => {
+            el.style.transform = `translateY(-100px)`
+            let positionY = -100
+            const inteval = setInterval(() => {
+                positionY += 2.5
+                el.style.transform = `translateY(${positionY}px)`
+
+                if(positionY <= 675 &&
+                positionY + el.clientHeight >= 675 &&
+                select == `judge${lane_num}`
+                ){
+                    console.log("当たり判定")
+                    score_box.innerHTML = score++
+                }
+
+                if (1000 < positionY) {
+                    clearInterval(inteval)
+                }
+            }, 5)
+        }
+
+        
+    </script>
+</body>
+</html>
